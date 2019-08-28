@@ -104,6 +104,7 @@ def calculator():
         calorie_data = db.query(Data).filter_by(user_id=user.id).first()
         if calorie_data:
             calorie_data.calories = total_energy_expenditure
+            calorie_data.weight = weight
         else:
             calorie_data = Data(calories=total_energy_expenditure, weight=weight, user_id=user.id)
         db.add(calorie_data)
