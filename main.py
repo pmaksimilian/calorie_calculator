@@ -78,5 +78,34 @@ def logout():
     return response
 
 
+@app.route("/calculator", methods=["POST", "GET"])
+def calculator():
+    session_token = request.cookies.get("session_token")
+    user = db.query(User).filter_by(session_token=session_token).first()
+    if not user:
+        return redirect(url_for('login'))
+    if request.method == "GET":
+        return render_template("calculator.html", title="Calculator", user=user)
+    elif request.method == "POST":
+        sex = request.form.get("sex")
+        weight = float(request.form.get("weight"))
+        height = int(request.form.get("height"))
+        age = int(request.form.get("age"))
+        activity = float(request.form.get("activity"))
+
+        if sex == "male":
+            resting_energy_expenditure = (10 * weight) + (6.25 * height) - (5 * age) + 5
+            total_energy_expenditure = resting_energy_expenditure * activity
+        else:
+            resting_energy_expenditure = (10 * weight) + (6.25 * height) - (5 * age) - 161
+            total_energy_expenditure = resting_energy_expenditure * activity
+
+        total_energy_expenditure = int(total_energy_expenditure)
+        return render_template("results.html", total_energy_expenditure=total_energy_expenditure, user=user)
+
+    else:
+        print("Something is wrong.")
+
+
 if __name__ == '__main__':
     app.run(debug=True)
