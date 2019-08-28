@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% if title %}
+    <title>{{ title }} - Final Project</title>
+    {% else %}
+    <title>My Final Project</title>
+    {% endif %}
+</head>
+<body>
+
+<h1>Final project</h1>
+<ul>
+    <li><a href="/">Home</a></li>
+    {% if not user %}
+    <li><a href="/login">Login</a></li>
+    <li><a href="/register">Register</a></li>
+    {% else %}
+    <li><a href="/logout">Logout</a></li>
+    {% endif %}
+</ul>
+
+
+{% block content %}
+
+{% endblock content %}
+
+</body>
+</html>
