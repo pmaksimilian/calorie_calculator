@@ -88,7 +88,7 @@ def calculator():
         return render_template("calculator.html", title="Calculator", user=user)
     elif request.method == "POST":
         sex = request.form.get("sex")
-        weight = float(request.form.get("weight"))
+        weight = int(request.form.get("weight"))
         height = int(request.form.get("height"))
         age = int(request.form.get("age"))
         activity = float(request.form.get("activity"))

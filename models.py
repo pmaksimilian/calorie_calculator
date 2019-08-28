@@ -16,5 +16,5 @@ class User(db.Model):
 class Data(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     calories = db.Column(db.Integer)
-    weight = db.Column(db.Float)
+    weight = db.Column(db.Integer)
     user_id = db.Column(db.Integer, unique=True)
