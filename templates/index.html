@@ -2,8 +2,16 @@
 
 {% block content %}
 
-<h2>First page</h2>
+<h2 class="naslov">Calorie Intake Calculator</h2>
 
-<p>Your name: {{ user.name }}</p>
+{% if user %}
+<p class="welcome_text">{{ user.name }}, welcome to the Calorie Intake Calculator. Here you can calculate what are your
+    daily calories requirements to lose, maintain or gain weight.</p>
+{% else %}
+<p class="welcome_text">Dear guest, welcome to the Calorie Intake Calculator. Here you can calculate what are your daily
+    calories requirements to lose, maintain or gain weight.</p>
+<p class="welcome_text">To continue please <a href="/login">log in</a> or <a href="/register">register</a>.</p>
+{% endif %}
+<img src="static/img/first_page.jpg" class="responsive" alt="food pic">
 
 {% endblock content %}

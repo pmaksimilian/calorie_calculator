@@ -2,14 +2,22 @@
 
 {% block content %}
 
-<h2>Login page</h2>
+<h2 class="naslov">Login page</h2>
 <p>You have to be logged in to view content.</p>
 
-<form method="post" action="/login">
-    <input type="email" name="email" placeholder="Enter your email"><br>
-    <input type="password" name="password" placeholder="Enter your password"><br>
-    <button>Submit</button>
+<form method="post" action="/login" class="loginForm">
+    <div class="form-group">
+        <label for="mailInput">Email address</label>
+        <input type="email" class="form-control" id="mailInput" name="email" placeholder="Enter your email">
+    </div>
+    <div class="form-group">
+        <label for="passInput">Password</label>
+        <input type="password" class="form-control" id="passInput" name="password" placeholder="Enter your password">
+    </div>
+    <button type="submit" class="btn btn-light">Login</button>
 </form>
+
+<p>New here? Just <a href="/register">register!</a> </p>
 
 
 {% endblock content %}

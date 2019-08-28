@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     {% if title %}
-    <title>{{ title }} - Final Project</title>
+    <title>{{ title }} - Calorie Calculator</title>
     {% else %}
-    <title>My Final Project</title>
+    <title>Calorie Calculator</title>
     {% endif %}
 
     <!-- bootstrap -->
@@ -18,22 +18,45 @@
 </head>
 <body>
 
-<h1>Final project</h1>
-<ul>
-    <li><a href="/">Home</a></li>
-    {% if not user %}
-    <li><a href="/login">Login</a></li>
-    <li><a href="/register">Register</a></li>
-    {% else %}
-    <li><a href="/calculator">Calorie calculator</a></li>
-    <li><a href="/logout">Logout</a></li>
-    {% endif %}
-</ul>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            {% if not user %}
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Register</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="/my-profile">My profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/calculator">Calculator</a>
+            </li>
+            {% endif %}
+        </ul>
+        {% if user %}
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <form action="/logout">
+                    <button type="submit" class="btn btn-light">Logout {{ user.name }}</button>
+                </form>
+            </li>
+        </ul>
+        {% endif %}
+    </div>
+</nav>
 
-
+<div class="content container">
 {% block content %}
 
 {% endblock content %}
+</div>
 
 </body>
 </html>

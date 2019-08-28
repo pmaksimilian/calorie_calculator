@@ -1,5 +1,5 @@
 from flask import Flask, make_response, render_template, request, redirect, url_for
-from models import User, db
+from models import User, db, Data
 import hashlib
 import uuid
 
@@ -16,7 +16,7 @@ def index():
         user = db.query(User).filter_by(session_token=session_token).first()
         return render_template("index.html", title="First Page", user=user)
     else:
-        return redirect(url_for('login'))
+        return render_template("index.html", title="First Page")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -73,7 +73,7 @@ def register():
 
 @app.route("/logout")
 def logout():
-    response = make_response(redirect(url_for("login")))
+    response = make_response(redirect(url_for("index")))
     response.set_cookie("session_token", "", expires=0)
     return response
 
@@ -101,10 +101,27 @@ def calculator():
             total_energy_expenditure = resting_energy_expenditure * activity
 
         total_energy_expenditure = int(total_energy_expenditure)
-        return render_template("results.html", total_energy_expenditure=total_energy_expenditure, user=user)
+        calorie_data = db.query(Data).filter_by(user_id=user.id).first()
+        if calorie_data:
+            calorie_data.calories = total_energy_expenditure
+        else:
+            calorie_data = Data(calories=total_energy_expenditure, weight=weight, user_id=user.id)
+        db.add(calorie_data)
+        db.commit()
+        return redirect(url_for("my_profile"))
 
     else:
         print("Something is wrong.")
+
+
+@app.route("/my-profile")
+def my_profile():
+    session_token = request.cookies.get("session_token")
+    user = db.query(User).filter_by(session_token=session_token).first()
+    if not user:
+        return redirect(url_for('login'))
+    calorie_data = db.query(Data).filter_by(user_id=user.id).first()
+    return render_template("my_profile.html", title="My Profile", calorie_data=calorie_data, user=user)
 
 
 if __name__ == '__main__':

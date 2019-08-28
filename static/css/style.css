@@ -1,3 +1,27 @@
 #calculatorForm {
+    width: 350px;
+    border: solid;
+    border-color: silver;
+    padding: 20px;
+    background-color: Snow;
+    display: inline-block;
+}
+
+.content {
+    text-align: center;
+}
+
+.naslov {
+    margin: 30px;
+}
+
+.welcome_text {
+    width: 600px;
+    display: inline-block;
+}
+
+.loginForm {
     width: 300px;
+    display: inline-block;
+    text-align: left;
 }

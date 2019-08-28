@@ -2,13 +2,22 @@
 
 {% block content %}
 
-<h2>Register page</h2>
+<h2 class="naslov">Register page</h2>
 
-<form method="post" action="/register">
-    <input type="text" name="username" placeholder="Enter your name"><br>
-    <input type="email" name="email" placeholder="Enter your email"><br>
-    <input type="password" name="password" placeholder="Enter your password"><br>
-    <button>Submit</button>
+<form method="post" action="/register" class="loginForm">
+    <div class="form-group">
+        <label for="nameInput">Username</label>
+        <input type="text" class="form-control" id="nameInput" name="username" placeholder="Enter your name">
+    </div>
+    <div class="form-group">
+        <label for="mailInput">Email address</label>
+        <input type="email" class="form-control" id="mailInput" name="email" placeholder="Enter your email">
+    </div>
+    <div class="form-group">
+        <label for="passInput">Password</label>
+        <input type="password" class="form-control" id="passInput" name="password" placeholder="Enter your password">
+    </div>
+    <button type="submit" class="btn btn-light">Register</button>
 </form>
 
 {% endblock content %}

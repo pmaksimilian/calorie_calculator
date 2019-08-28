@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3 class="naslov">My Profile</h3>
+
+{% if calorie_data %}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th colspan="2">Your current weight is {{ calorie_data.weight }} kg</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Maintain weight</td>
+            <td>{{ calorie_data.calories }} calories/day</td>
+        </tr>
+        <tr>
+            <td>Lose 0.5 kg per week</td>
+            <td>{{ calorie_data.calories - 500 }} calories/day</td>
+        </tr>
+        <tr>
+            <td>Lose 1 kg per week</td>
+            <td>{{ calorie_data.calories - 1000 }} calories/day</td>
+        </tr>
+        <tr>
+            <td>Gain 0.5 kg per week</td>
+            <td>{{ calorie_data.calories + 500 }} calories/day</td>
+        </tr>
+        <tr>
+            <td>Gain 1 kg per week</td>
+            <td>{{ calorie_data.calories + 1000 }} calories/day</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<p class="welcome_text">If your weight has changed, <a href="/calculator">calculate</a> your results again!</p>
+{% else %}
+
+{% endif %}
+
+{% endblock content %}
