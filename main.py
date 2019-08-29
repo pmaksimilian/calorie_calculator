@@ -54,7 +54,7 @@ def login():
 
         if user:
             if password == user.password:
-                log_in(user)
+                return log_in(user)
             else:
                 return render_template("login.html", title="Login", wrong_password=True)
         else:
