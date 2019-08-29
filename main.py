@@ -8,6 +8,7 @@ from sqlalchemy import exc
 app = Flask(__name__)
 db.create_all()
 
+
 # checks if user is logged in
 def check_login():
     session_token = request.cookies.get("session_token")
@@ -15,7 +16,7 @@ def check_login():
     return user
 
 
-# logges the user in
+# logs the user in
 def log_in(user):
     session_token = str(uuid.uuid4())
     response = make_response(redirect(url_for('index')))
