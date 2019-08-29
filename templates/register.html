@@ -20,6 +20,13 @@
         <label for="passInput">Password</label>
         <input type="password" class="form-control" id="passInput" name="password" placeholder="Enter your password">
     </div>
+    <div class="form-group">
+        <label for="passInput2">Confirm password</label>
+        <input type="password" class="form-control" id="passInput2" name="passwordConf" placeholder="Enter your password again">
+    </div>
+    {% if diffPass %}
+        <small class="form-text text-muted">Your passwords did not match, try again!</small>
+    {% endif %}
     <button type="submit" class="btn btn-light">Register</button>
 </form>
 

@@ -75,6 +75,11 @@ def register():
         name = request.form.get("username")
         email = request.form.get("email")
         raw_password = request.form.get("password")
+        raw_password2 = request.form.get("passwordConf")
+
+        if raw_password != raw_password2:
+            return render_template("register.html", title="Register", diffPass=True)
+
         password = hashlib.sha3_256(raw_password.encode()).hexdigest()
 
         user = User(name=name, email=email, password=password)
