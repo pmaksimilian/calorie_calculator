@@ -5,6 +5,9 @@
 <h2 class="naslov">Register page</h2>
 
 <form method="post" action="/register" class="loginForm">
+    {% if message %}
+        <small class="form-text text-muted">Username or email already in the database.</small>
+    {% endif %}
     <div class="form-group">
         <label for="nameInput">Username</label>
         <input type="text" class="form-control" id="nameInput" name="username" placeholder="Enter your name">

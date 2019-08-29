@@ -2,58 +2,73 @@ from flask import Flask, make_response, render_template, request, redirect, url_
 from models import User, db, Data
 import hashlib
 import uuid
+from sqlalchemy import exc
 
 
 app = Flask(__name__)
 db.create_all()
 
+# checks if user is logged in
+def check_login():
+    session_token = request.cookies.get("session_token")
+    user = db.query(User).filter_by(session_token=session_token).first()
+    return user
 
+
+# logges the user in
+def log_in(user):
+    session_token = str(uuid.uuid4())
+    response = make_response(redirect(url_for('index')))
+    response.set_cookie("session_token", session_token)
+    user.session_token = session_token
+    db.add(user)
+    db.commit()
+    return response
+
+
+# renders the first page, which is a little different if user is logged in or not
 @app.route("/")
 @app.route("/index")
 def index():
-    session_token = request.cookies.get("session_token")
-    if session_token:
-        user = db.query(User).filter_by(session_token=session_token).first()
+    user = check_login()
+    if user:
         return render_template("index.html", title="First Page", user=user)
     else:
         return render_template("index.html", title="First Page")
 
 
+# 3 options: redirect logged in users to index, render a login page or log in a user
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    session_token = request.cookies.get("session_token")
-    if session_token:
-        user = db.query(User).filter_by(session_token=session_token).first()
-        return redirect(url_for('index'), user=user)
-    else:
-        if request.method == "GET":
-            return render_template("login.html", title="Login")
-        elif request.method == "POST":
-            email = request.form.get("email")
-            raw_password = request.form.get("password")
-            password = hashlib.sha3_256(raw_password.encode()).hexdigest()
-            session_token = str(uuid.uuid4())
+    user = check_login()
+    if user:
+        return redirect(url_for('index'))
+    if request.method == "GET":
+        return render_template("login.html", title="Login")
+    elif request.method == "POST":
+        email = request.form.get("email")
+        raw_password = request.form.get("password")
+        password = hashlib.sha3_256(raw_password.encode()).hexdigest()
 
-            user = db.query(User).filter_by(email=email).first()
+        user = db.query(User).filter_by(email=email).first()
 
-            if user:
-                if password == user.password:
-                    response = make_response(redirect(url_for('index')))
-                    response.set_cookie("session_token", session_token)
-                    user.session_token = session_token
-                    db.add(user)
-                    db.commit()
-                    return response
-                else:
-                    return "Wrong password, try again."
+        if user:
+            if password == user.password:
+                log_in(user)
             else:
-                return "Wrong email, try again."
+                return render_template("login.html", title="Login", wrong_password=True)
         else:
-            print("Something is wrong.")
+            return render_template("login.html", title="Login", wrong_email=True)
+    else:
+        print("Something is wrong.")
 
 
+# register new users
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    user = check_login()
+    if user:
+        return redirect(url_for('index'))
     if request.method == "GET":
         return render_template("register.html", title="Register")
     elif request.method == "POST":
@@ -63,14 +78,18 @@ def register():
         password = hashlib.sha3_256(raw_password.encode()).hexdigest()
 
         user = User(name=name, email=email, password=password)
-        db.add(user)
-        db.commit()
+        try:
+            db.add(user)
+            db.commit()
+        except exc.IntegrityError:
+            return render_template("register.html", title="Register", message=True)
 
-        return redirect(url_for('login'))
+        return log_in(user)
     else:
-        print("Something is wrong.")
+        return "Something is wrong."
 
 
+# simple logout by deleting cookie
 @app.route("/logout")
 def logout():
     response = make_response(redirect(url_for("index")))
@@ -80,8 +99,7 @@ def logout():
 
 @app.route("/calculator", methods=["POST", "GET"])
 def calculator():
-    session_token = request.cookies.get("session_token")
-    user = db.query(User).filter_by(session_token=session_token).first()
+    user = check_login()
     if not user:
         return redirect(url_for('login'))
     if request.method == "GET":
@@ -93,6 +111,8 @@ def calculator():
         age = int(request.form.get("age"))
         activity = float(request.form.get("activity"))
 
+        # gets data from form and calculate results using the Mufflin equation
+
         if sex == "male":
             resting_energy_expenditure = (10 * weight) + (6.25 * height) - (5 * age) + 5
             total_energy_expenditure = resting_energy_expenditure * activity
@@ -101,6 +121,8 @@ def calculator():
             total_energy_expenditure = resting_energy_expenditure * activity
 
         total_energy_expenditure = int(total_energy_expenditure)
+
+        # check if calculation already exists
         calorie_data = db.query(Data).filter_by(user_id=user.id).first()
         if calorie_data:
             calorie_data.calories = total_energy_expenditure
@@ -112,13 +134,13 @@ def calculator():
         return redirect(url_for("my_profile"))
 
     else:
-        print("Something is wrong.")
+        return "Something is wrong."
 
 
+# render page with results
 @app.route("/my-profile")
 def my_profile():
-    session_token = request.cookies.get("session_token")
-    user = db.query(User).filter_by(session_token=session_token).first()
+    user = check_login()
     if not user:
         return redirect(url_for('login'))
     calorie_data = db.query(Data).filter_by(user_id=user.id).first()

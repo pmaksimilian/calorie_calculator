@@ -5,6 +5,7 @@ import os
 db = SQLAlchemy(os.getenv("DATABASE_URL", "sqlite:///localhost.sqlite"))
 
 
+# db of users
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True)
@@ -13,6 +14,7 @@ class User(db.Model):
     session_token = db.Column(db.String)
 
 
+# db of user's data
 class Data(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     calories = db.Column(db.Integer)
