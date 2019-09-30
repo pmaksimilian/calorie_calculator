@@ -3,12 +3,14 @@ from models import User, db, Data
 import hashlib
 import uuid
 from sqlalchemy import exc
+from foods import macro_calculator, mealplan_calculator
 
 
 app = Flask(__name__)
 db.create_all()
 
 
+# funkcije v common directory (obvezno dodaj __init__)
 # checks if user is logged in
 def check_login():
     session_token = request.cookies.get("session_token")
@@ -116,6 +118,7 @@ def calculator():
         height = int(request.form.get("height"))
         age = int(request.form.get("age"))
         activity = float(request.form.get("activity"))
+        goals = int(request.form.get("goals"))
 
         # gets data from form and calculate results using the Mufflin equation
 
@@ -126,15 +129,25 @@ def calculator():
             resting_energy_expenditure = (10 * weight) + (6.25 * height) - (5 * age) - 161
             total_energy_expenditure = resting_energy_expenditure * activity
 
-        total_energy_expenditure = int(total_energy_expenditure)
+        calorie_intake = int(total_energy_expenditure)
+
+        if goals == 2:
+            calorie_intake -= 500
+        elif goals == 3:
+            calorie_intake -= 1000
+        elif goals == 4:
+            calorie_intake += 500
+        elif goals == 5:
+            calorie_intake += 1000
 
         # check if calculation already exists
         calorie_data = db.query(Data).filter_by(user_id=user.id).first()
         if calorie_data:
-            calorie_data.calories = total_energy_expenditure
+            calorie_data.calories = calorie_intake
             calorie_data.weight = weight
+            calorie_data.goals = goals
         else:
-            calorie_data = Data(calories=total_energy_expenditure, weight=weight, user_id=user.id)
+            calorie_data = Data(calories=calorie_intake, weight=weight, goals=goals, user_id=user.id)
         db.add(calorie_data)
         db.commit()
         return redirect(url_for("my_profile"))
@@ -149,8 +162,43 @@ def my_profile():
     user = check_login()
     if not user:
         return redirect(url_for('login'))
+
+    breakfast = {
+        "oatmeal": 40,
+        "yogurt": 50,
+        "almonds": 5,
+        "whey": 15
+    }
+    brunch = {
+        "eggs": 2,
+        "wholemeal bread": 40
+    }
+    lunch = {
+        "chicken breast": 120,
+        "rice": 35
+    }
+    dinner = {
+        "salmon": 90,
+        "potato": 110
+    }
     calorie_data = db.query(Data).filter_by(user_id=user.id).first()
-    return render_template("my_profile.html", title="My Profile", calorie_data=calorie_data, user=user)
+    breakfast = mealplan_calculator(calorie_data.calories, breakfast)
+    brunch = mealplan_calculator(calorie_data.calories, brunch)
+    lunch = mealplan_calculator(calorie_data.calories, lunch)
+    dinner = mealplan_calculator(calorie_data.calories, dinner)
+
+    macros = macro_calculator(calorie_data.calories)
+
+    return render_template("my_profile.html", title="My Profile", calorie_data=calorie_data, macros=macros, user=user,
+                           breakfast=breakfast, brunch=brunch, lunch=lunch, dinner=dinner)
+
+
+#
+# NASLEDNJIC!!!
+# - uredi izpis dnevnega jedilnika in nasploh my-profile strani
+# - nato zrihtaj migracijo baze in foreign-key
+# - formula za izračuna jedilnika
+#
 
 
 if __name__ == '__main__':

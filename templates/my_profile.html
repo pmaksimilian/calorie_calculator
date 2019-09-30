@@ -5,37 +5,48 @@
 <h3 class="naslov">My Profile</h3>
 
 {% if calorie_data %}
+
+<p>Your current weight is {{ calorie_data.weight }} kg</p>
+<p class="welcome_text">If your weight has changed, <a href="/calculator">calculate</a> your results again!</p>
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th colspan="2">Your current weight is {{ calorie_data.weight }} kg</th>
+            <th colspan="2">Your mealplan</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>Maintain weight</td>
-            <td>{{ calorie_data.calories }} calories/day</td>
+            <td>To reach you goals you need to eat {{ calorie_data.calories }} calories/day</td>
         </tr>
         <tr>
-            <td>Lose 0.5 kg per week</td>
-            <td>{{ calorie_data.calories - 500 }} calories/day</td>
+            <td>Macros: carbohydrates: {{ macros["carbs"] }} grams, proteins: {{ macros["proteins"] }} grams, fats: {{ macros["fats"] }} grams</td>
         </tr>
         <tr>
-            <td>Lose 1 kg per week</td>
-            <td>{{ calorie_data.calories - 1000 }} calories/day</td>
-        </tr>
-        <tr>
-            <td>Gain 0.5 kg per week</td>
-            <td>{{ calorie_data.calories + 500 }} calories/day</td>
-        </tr>
-        <tr>
-            <td>Gain 1 kg per week</td>
-            <td>{{ calorie_data.calories + 1000 }} calories/day</td>
+            <td>
+                Breakfast:
+                {% for food in breakfast %}
+                    {{ food }} ({{ breakfast[food] }} grams)<br>
+                {% endfor %}
+                <br>
+                Brunch:
+                {% for food in brunch %}
+                    {{ food }} ({{ brunch[food] }}{% if food != 'eggs' %} grams{% endif %})<br>
+                {% endfor %}
+                <br>
+                Lunch:
+                {% for food in lunch %}
+                    {{ food }} ({{ lunch[food] }} grams)<br>
+                {% endfor %}
+                <br>
+                Dinner:
+                {% for food in dinner %}
+                    {{ food }} ({{ dinner[food] }} grams)<br>
+                {% endfor %}
+            </td>
         </tr>
     </tbody>
 </table>
 <br>
-<p class="welcome_text">If your weight has changed, <a href="/calculator">calculate</a> your results again!</p>
 {% else %}
 <p class="welcome_text">You have not yet calculated your intake. Please visit <a href="/calculator">calculator</a> to continue.</p>
 {% endif %}

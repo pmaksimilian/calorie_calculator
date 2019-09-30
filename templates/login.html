@@ -8,14 +8,14 @@
 <form method="post" action="/login" class="loginForm">
     <div class="form-group">
         <label for="mailInput">Email address</label>
-        <input type="email" class="form-control" id="mailInput" name="email" placeholder="Enter your email">
+        <input type="email" class="form-control" id="mailInput" name="email" placeholder="Enter your email" required>
         {% if wrong_email %}
         <small class="form-text text-muted">Wrong email, try again!</small>
         {% endif %}
     </div>
     <div class="form-group">
         <label for="passInput">Password</label>
-        <input type="password" class="form-control" id="passInput" name="password" placeholder="Enter your password">
+        <input type="password" class="form-control" id="passInput" name="password" placeholder="Enter your password" required>
         {% if wrong_password %}
         <small class="form-text text-muted">Wrong password, try again!</small>
         {% endif %}

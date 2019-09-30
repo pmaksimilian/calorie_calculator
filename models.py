@@ -19,4 +19,8 @@ class Data(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     calories = db.Column(db.Integer)
     weight = db.Column(db.Integer)
+    goals = db.Column(db.Integer)
     user_id = db.Column(db.Integer, unique=True)
+# foreign key
+
+# GOALS: 1 is maintain, 2 lose 0.5, 3 lose 1, 4 gain 0.5, 5 gain 1
